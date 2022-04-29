@@ -49,5 +49,5 @@ jobs:
         with:
           app-name: 'geomot'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_AF68312BE0AB4761A1DB6F472C55F5E3 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6C3C11860C2A46E1A2BF225B8D8E6C94 }}
           package: '*.war'
