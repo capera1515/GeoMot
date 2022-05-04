@@ -82,7 +82,7 @@ public class GeoMotDaoImpl implements GeoMotDao {
 	@SuppressWarnings("deprecation")
 	public RequesInfoGeneral getInfoMotoPersona(Integer tipoDocumento, String numDocumento, String placa) {
 		RequesInfoGeneral requesInfoGeneral = new RequesInfoGeneral();
-		String hql = "{call  geomot.getInfoMotoPersona(?, ?, ?, ?)}";
+		String hql = "{ CALL geomot.getInfoMotoPersona(?, ?, ?, ?)}";
 		String out = "";
 		ObjectMapper objectMapper = new ObjectMapper();
 		try (CallableStatement callableStatement = ((SessionImpl) getSession().getSession()).connection()
