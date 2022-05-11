@@ -14,7 +14,6 @@ public class RequesInfoGeneral {
 	private PersonaDTO personaDTO;
 	private List<ContactoDTO> contactoDTOList;
 	private MotoDTO motoDTO;
-	private List<ControlEstadoMotoDTO> controlEstadoMotoDTOList;
 	private List<KilometrajenotificacionDTO> kilometrajenotificacionDTOList;
 	private StatusResponse statusResponse;
 
@@ -58,20 +57,6 @@ public class RequesInfoGeneral {
 	 */
 	public void setMotoDTO(MotoDTO motoDTO) {
 		this.motoDTO = motoDTO;
-	}
-
-	/**
-	 * @return the controlEstadoMotoDTOList
-	 */
-	public List<ControlEstadoMotoDTO> getControlEstadoMotoDTOList() {
-		return controlEstadoMotoDTOList;
-	}
-
-	/**
-	 * @param controlEstadoMotoDTOList the controlEstadoMotoDTOList to set
-	 */
-	public void setControlEstadoMotoDTOList(List<ControlEstadoMotoDTO> controlEstadoMotoDTOList) {
-		this.controlEstadoMotoDTOList = controlEstadoMotoDTOList;
 	}
 
 	/**

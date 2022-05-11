@@ -4,7 +4,9 @@
 package com.wsgeomot.co.service.impl;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -17,7 +19,7 @@ import com.wsgeomot.co.model.dto.ContactoDTO;
 import com.wsgeomot.co.model.dto.ControlEstadoMotoDTO;
 import com.wsgeomot.co.model.dto.KilometrajenotificacionDTO;
 import com.wsgeomot.co.model.dto.MotoDTO;
-import com.wsgeomot.co.model.dto.NotificacionDTO;
+import com.wsgeomot.co.model.dto.PersonaContactoRequest;
 import com.wsgeomot.co.model.dto.PersonaDTO;
 import com.wsgeomot.co.model.dto.RequesInfoGeneral;
 import com.wsgeomot.co.model.dto.StatusResponse;
@@ -25,8 +27,14 @@ import com.wsgeomot.co.model.entity.ContactoEntity;
 import com.wsgeomot.co.model.entity.ControlEstadoMotoEntity;
 import com.wsgeomot.co.model.entity.KilometrajenotificacionEntity;
 import com.wsgeomot.co.model.entity.MotoEntity;
-import com.wsgeomot.co.model.entity.NotificacionEntity;
 import com.wsgeomot.co.model.entity.PersonaEntity;
+import com.wsgeomot.co.model.response.ResponseContacto;
+import com.wsgeomot.co.model.response.ResponseContactoGL;
+import com.wsgeomot.co.model.response.ResponseEventoPlantillaDTO;
+import com.wsgeomot.co.model.response.ResponseKilometrajenotificacion;
+import com.wsgeomot.co.model.response.ResponseMaestraLista;
+import com.wsgeomot.co.model.response.ResponseMotoEntity;
+import com.wsgeomot.co.model.response.ResponsePersonaEntity;
 import com.wsgeomot.co.service.GeoMotService;
 import com.wsgeomot.util.ResponseCodes;
 import com.wsgeomot.util.ValidateGeneral;
@@ -47,6 +55,7 @@ public class GeoMotServiceImpl implements GeoMotService {
 	private static final Logger logger = Logger.getLogger(GeoMotServiceImpl.class);
 
 	public static final int VL = 1;
+	public static final String KL = "S";
 
 	/**
 	 * METODO DE CONSULTA DE INFORMACION GENERAL PERSONA MOTO
@@ -61,24 +70,81 @@ public class GeoMotServiceImpl implements GeoMotService {
 	}
 
 	/**
+	 * METODO DE CONSULTA DE EVENTOS Y PLANTILLAS
+	 * 
+	 * @param idEvento
+	 * @returnResponseEventoPlantillaDTO
+	 */
+	public ResponseEventoPlantillaDTO getEventoPlantilla(Integer idEvento) {
+		return service.getEventoPlantilla(idEvento);
+	}
+
+	/**
+	 * METODO DE CONSULTA DE LISTAS MAESTRAS
+	 * 
+	 * @param tipoDocumento
+	 * @param numDocumento
+	 * @param placa
+	 * @return ResponseMaestraLista
+	 */
+	public ResponseMaestraLista getInfoListasMaestras(String tipoDato) {
+		return service.getInfoListasMaestras(tipoDato);
+	}
+
+	/**
+	 * METODO DE REGISTRO DE PERSONA Y CONTACTO
+	 * 
+	 * @param persoContacRequest
+	 * @return ResponseContactoGL
+	 */
+	public ResponseContactoGL insertUpdatePersonaContactoDTO(PersonaContactoRequest persoContacRequest) {
+		StatusResponse statusResponse = ResponseCodes.SUCCESS;
+		ResponseContactoGL responseContactoGL = new ResponseContactoGL();
+		ResponsePersonaEntity responsePersonaEntity = new ResponsePersonaEntity();
+		try {
+			statusResponse = validateGeneral.validate(persoContacRequest.getPersonaDTO());
+			if (statusResponse.getStatus().equals(ResponseCodes.SUCCESS.getStatus())) {
+				responsePersonaEntity = insertUpdatetPersona(
+						maperPersonaDTOToEntity(persoContacRequest.getPersonaDTO()));
+			}
+
+			if (responsePersonaEntity.getStatusResponse().getStatus().equals(ResponseCodes.SUCCESS.getStatus())) {
+				responseContactoGL = insertUpdateContactoListDTO(persoContacRequest.getContactoDTOList(),
+						responsePersonaEntity.getPersonaEntity().getIdPersona());
+			} else {
+				responseContactoGL.setStatusResponse(statusResponse);
+			}
+
+		} catch (Exception e) {
+			responseContactoGL.setStatusResponse(ResponseCodes.TECHNICAL_ERROR);
+			String message = "GeoMotServiceImpl insertUpdateGeneral" + e.getMessage() + e.getCause();
+			logger.error(message);
+		}
+		return responseContactoGL;
+
+	}
+
+	/**
 	 * METODO DE RESGISTRO O ACTUALIZACION DE PERSONA
 	 * 
 	 * @param PersonaDTO
 	 * @return insertUpdatePersonaDTO
 	 */
-	public StatusResponse insertUpdatePersonaDTO(PersonaDTO persona) {
-		StatusResponse statusResponse = ResponseCodes.SUCCESS;
+	public ResponsePersonaEntity insertUpdatePersonaDTO(PersonaDTO persona) {
+		ResponsePersonaEntity responsePersonaEntity = new ResponsePersonaEntity();
 		try {
-			statusResponse = validateGeneral.validate(persona);
+			StatusResponse statusResponse = validateGeneral.validate(persona);
 			if (statusResponse.getStatus().equals(ResponseCodes.SUCCESS.getStatus())) {
-				statusResponse = insertUpdatetPersona(maperPersonaDTOToEntity(persona));
+				responsePersonaEntity = insertUpdatetPersona(maperPersonaDTOToEntity(persona));
+			} else {
+				responsePersonaEntity.setStatusResponse(statusResponse);
 			}
 		} catch (Exception e) {
-			statusResponse = ResponseCodes.TECHNICAL_ERROR;
+			responsePersonaEntity.setStatusResponse(ResponseCodes.TECHNICAL_ERROR);
 			String message = "GeoMotServiceImpl insertUpdateGeneral" + e.getMessage() + e.getCause();
 			logger.error(message);
 		}
-		return statusResponse;
+		return responsePersonaEntity;
 
 	}
 
@@ -105,24 +171,58 @@ public class GeoMotServiceImpl implements GeoMotService {
 	}
 
 	/**
+	 * 
+	 * @param contactoDTOList
+	 * @return ResponseContactoGL
+	 */
+	public ResponseContactoGL insertUpdateContactoListDTO(List<ContactoDTO> contactoDTOList, Integer idperson) {
+		ResponseContactoGL responseContactoGL = new ResponseContactoGL();
+		StatusResponse statusResponse = ResponseCodes.SUCCESS;
+		List<ResponseContacto> responseContacto = new ArrayList<>();
+		try {
+			responseContactoGL.setStatusResponse(ResponseCodes.SUCCESS);
+			if (!contactoDTOList.isEmpty() && (contactoDTOList.get(0) != null)) {
+				for (ContactoDTO contactoDTO : contactoDTOList) {
+					ResponseContacto listaRest = new ResponseContacto();
+					contactoDTO.setIdPersona(idperson);
+					statusResponse = insertUpdateContactoDTO(contactoDTO);
+					listaRest.setStatusResponse(statusResponse);
+					listaRest.setContacto(contactoDTO);
+					responseContacto.add(listaRest);
+				}
+				responseContactoGL.setStatusResponse(ResponseCodes.SUCCESS);
+				responseContactoGL.setResponseContacto(responseContacto);
+			}
+		} catch (Exception e) {
+			responseContactoGL.setStatusResponse(ResponseCodes.TECHNICAL_ERROR);
+			String message = "GeoMotServiceImpl insertUpdateContactoListDTO" + e.getMessage() + e.getCause();
+			logger.error(message);
+		}
+		return responseContactoGL;
+
+	}
+
+	/**
 	 * METODO DE REGISTRO O ACTUALIZACION DE MOTO
 	 * 
 	 * @param MotoDTO
 	 * @return StatusResponse
 	 */
-	public StatusResponse insertUpdateMotoDTO(MotoDTO motoDTO) {
-		StatusResponse statusResponse = ResponseCodes.SUCCESS;
+	public ResponseMotoEntity insertUpdateMotoDTO(MotoDTO motoDTO) {
+		ResponseMotoEntity responseMotoEntity = new ResponseMotoEntity();
 		try {
-			statusResponse = validateGeneral.validate(motoDTO);
+			StatusResponse statusResponse = validateGeneral.validate(motoDTO);
 			if (statusResponse.getStatus().equals(ResponseCodes.SUCCESS.getStatus())) {
-				statusResponse = insertUpdatetMoto(maperMotoDTOToEntity(motoDTO));
+				responseMotoEntity = insertUpdatetMoto(maperMotoDTOToEntity(motoDTO));
+			} else {
+				responseMotoEntity.setStatusResponse(statusResponse);
 			}
 		} catch (Exception e) {
-			statusResponse = ResponseCodes.TECHNICAL_ERROR;
+			responseMotoEntity.setStatusResponse(ResponseCodes.TECHNICAL_ERROR);
 			String message = "GeoMotServiceImpl insertUpdateMotoDTO" + e.getMessage() + e.getCause();
 			logger.error(message);
 		}
-		return statusResponse;
+		return responseMotoEntity;
 
 	}
 
@@ -154,42 +254,23 @@ public class GeoMotServiceImpl implements GeoMotService {
 	 * @param KilometrajenotificacionDTO
 	 * @return StatusResponse
 	 */
-	public StatusResponse insertUpdateKilometrajenotificacionDTO(KilometrajenotificacionDTO kilometrajenotificacion) {
-		StatusResponse statusResponse = ResponseCodes.SUCCESS;
+	public ResponseKilometrajenotificacion insertUpdateKilometrajenotificacionDTO(
+			KilometrajenotificacionDTO kilometrajenotificacion) {
+		ResponseKilometrajenotificacion responseKilometrajenotificacion = new ResponseKilometrajenotificacion();
 		try {
-			statusResponse = validateGeneral.validate(kilometrajenotificacion);
+			StatusResponse statusResponse = validateGeneral.validate(kilometrajenotificacion);
 			if (statusResponse.getStatus().equals(ResponseCodes.SUCCESS.getStatus())) {
-				statusResponse = insertUpdatetKilometrajenotificacion(
+				responseKilometrajenotificacion = insertUpdatetKilometrajenotificacion(
 						maperKilometrajenotificacionDTOToEntity(kilometrajenotificacion));
+			} else {
+				responseKilometrajenotificacion.setStatusResponse(statusResponse);
 			}
 		} catch (Exception e) {
-			statusResponse = ResponseCodes.TECHNICAL_ERROR;
+			responseKilometrajenotificacion.setStatusResponse(ResponseCodes.TECHNICAL_ERROR);
 			String message = "GeoMotServiceImpl insertUpdateKilometrajenotificacionDTO" + e.getMessage() + e.getCause();
 			logger.error(message);
 		}
-		return statusResponse;
-
-	}
-
-	/**
-	 * METODO DE REGISTRO DE KILOMETRAJE DE NOTIFICACION DE MOTO
-	 * 
-	 * @param NotificacionDTO
-	 * @return StatusResponse
-	 */
-	public StatusResponse insertUpdatetNotificacion(NotificacionDTO notificacionDTO) {
-		StatusResponse statusResponse = ResponseCodes.SUCCESS;
-		try {
-			statusResponse = validateGeneral.validate(notificacionDTO);
-			if (statusResponse.getStatus().equals(ResponseCodes.SUCCESS.getStatus())) {
-				statusResponse = insertUpdatetNotificacion(maperNotificacionDTOToEntity(notificacionDTO));
-			}
-		} catch (Exception e) {
-			statusResponse = ResponseCodes.TECHNICAL_ERROR;
-			String message = "GeoMotServiceImpl insertUpdatetNotificacion" + e.getMessage() + e.getCause();
-			logger.error(message);
-		}
-		return statusResponse;
+		return responseKilometrajenotificacion;
 
 	}
 
@@ -198,7 +279,7 @@ public class GeoMotServiceImpl implements GeoMotService {
 	 * @param PersonaEntity
 	 * @return StatusResponse
 	 */
-	public StatusResponse insertUpdatetPersona(PersonaEntity entity) {
+	public ResponsePersonaEntity insertUpdatetPersona(PersonaEntity entity) {
 		return service.insertUpdatetPersona(entity);
 	}
 
@@ -266,7 +347,7 @@ public class GeoMotServiceImpl implements GeoMotService {
 	 * @param MotoEntity
 	 * @return StatusResponse
 	 */
-	public StatusResponse insertUpdatetMoto(MotoEntity entity) {
+	public ResponseMotoEntity insertUpdatetMoto(MotoEntity entity) {
 		return service.insertUpdatetMoto(entity);
 	}
 
@@ -326,6 +407,8 @@ public class GeoMotServiceImpl implements GeoMotService {
 		Date date = new Date();
 		Timestamp timestamp2 = new Timestamp(date.getTime());
 		entity.setFecha(timestamp2);
+		entity.setKilometrajemantenimieto(
+				controlDTO.getKilometrajemantenimieto() != null ? controlDTO.getKilometrajemantenimieto() : KL);
 		entity.setEstadoControlMoto(controlDTO.getEstadoControlMoto() != null ? controlDTO.getEstadoControlMoto() : VL);
 
 		return entity;
@@ -337,7 +420,7 @@ public class GeoMotServiceImpl implements GeoMotService {
 	 * @param KilometrajenotificacionEntity
 	 * @return StatusResponse
 	 */
-	public StatusResponse insertUpdatetKilometrajenotificacion(KilometrajenotificacionEntity entity) {
+	public ResponseKilometrajenotificacion insertUpdatetKilometrajenotificacion(KilometrajenotificacionEntity entity) {
 		return service.insertUpdatetKilometrajenotificacion(entity);
 	}
 
@@ -349,50 +432,21 @@ public class GeoMotServiceImpl implements GeoMotService {
 	public KilometrajenotificacionEntity maperKilometrajenotificacionDTOToEntity(KilometrajenotificacionDTO kilNotDTO) {
 		KilometrajenotificacionEntity entity = new KilometrajenotificacionEntity();
 
-		if (kilNotDTO.getIdKilometrajeNoti() != null) {
-			entity.setIdKilometrajeNoti(kilNotDTO.getIdKilometrajeNoti());
+		if (kilNotDTO.getKnidkilometrajenoti() != null) {
+			entity.setKnidkilometrajenoti(kilNotDTO.getKnidkilometrajenoti());
 		}
-		entity.setIdMoto(kilNotDTO.getIdMoto());
-		entity.setIdEvento(kilNotDTO.getIdEvento());
-		entity.setKilometrajeNoti(kilNotDTO.getKilometrajeNoti());
-		entity.setEstadoKilometrajeNoti(
-				kilNotDTO.getEstadoKilometrajeNoti() != null ? kilNotDTO.getEstadoKilometrajeNoti() : VL);
+		Timestamp timestamp2 = new Timestamp(new Date().getTime());
+		entity.setNtfecha(timestamp2);
+		entity.setMtidmoto(kilNotDTO.getMtidmoto());
+		entity.setEvtidevento(kilNotDTO.getEvtidevento());
+		entity.setKilometrajevalidador(kilNotDTO.getKilometrajevalidador());
+		entity.setKntkilometraje(kilNotDTO.getKntkilometraje());
+		entity.setNtduracion(kilNotDTO.getNtduracion());
+		entity.setNtnumrepeticion(kilNotDTO.getNtnumrepeticion());
+		entity.setNttiemporepeticion(kilNotDTO.getNttiemporepeticion());
+		entity.setStidestado(kilNotDTO.getStidestado() != null ? kilNotDTO.getStidestado() : VL);
 
 		return entity;
 	}
 
-	/**
-	 * METODO DE REGISTRO DE KILOMETRAJE DE NOTIFICACION DE MOTO
-	 * 
-	 * @param kilometrajenotificacion
-	 * @return StatusResponse
-	 */
-	public StatusResponse insertUpdatetNotificacion(NotificacionEntity entity) {
-		return service.insertUpdatetNotificacion(entity);
-	}
-
-	/**
-	 * 
-	 * @param NotificacionDTO
-	 * @return NotificacionEntity
-	 */
-	public NotificacionEntity maperNotificacionDTOToEntity(NotificacionDTO notificacionDTO) {
-		NotificacionEntity entity = new NotificacionEntity();
-
-		if (notificacionDTO.getIdNotificacion() != null) {
-			entity.setIdNotificacion(notificacionDTO.getIdNotificacion());
-		}
-
-		entity.setIdKilometrajeNoti(notificacionDTO.getIdKilometrajeNoti());
-		entity.setIdPlantilla(notificacionDTO.getIdPlantilla());
-		Date date = new Date();
-		Timestamp timestamp2 = new Timestamp(date.getTime());
-		entity.setFecha(timestamp2);
-		entity.setDuracion(notificacionDTO.getDuracion());
-		entity.setNumRepeticion(notificacionDTO.getNumRepeticion());
-		entity.setTiempoRepeticion(notificacionDTO.getTiempoRepeticion());
-		entity.setEstado(notificacionDTO.getEstado() != null ? notificacionDTO.getEstado() : VL);
-
-		return entity;
-	}
 }

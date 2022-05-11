@@ -7,10 +7,16 @@ import com.wsgeomot.co.model.dto.ContactoDTO;
 import com.wsgeomot.co.model.dto.ControlEstadoMotoDTO;
 import com.wsgeomot.co.model.dto.KilometrajenotificacionDTO;
 import com.wsgeomot.co.model.dto.MotoDTO;
-import com.wsgeomot.co.model.dto.NotificacionDTO;
+import com.wsgeomot.co.model.dto.PersonaContactoRequest;
 import com.wsgeomot.co.model.dto.PersonaDTO;
 import com.wsgeomot.co.model.dto.RequesInfoGeneral;
 import com.wsgeomot.co.model.dto.StatusResponse;
+import com.wsgeomot.co.model.response.ResponseContactoGL;
+import com.wsgeomot.co.model.response.ResponseEventoPlantillaDTO;
+import com.wsgeomot.co.model.response.ResponseKilometrajenotificacion;
+import com.wsgeomot.co.model.response.ResponseMaestraLista;
+import com.wsgeomot.co.model.response.ResponseMotoEntity;
+import com.wsgeomot.co.model.response.ResponsePersonaEntity;
 
 /**
  * @author Andres Capera
@@ -29,12 +35,20 @@ public interface GeoMotService {
 	public RequesInfoGeneral getInfoMotoPersona(Integer tipoDocumento, String numDocumento, String placa);
 
 	/**
+	 * METODO DE REGISTRO DE PERSONA Y CONTACTO
+	 * 
+	 * @param persoContacRequest
+	 * @return ResponseContactoGL
+	 */
+	public ResponseContactoGL insertUpdatePersonaContactoDTO(PersonaContactoRequest persoContacRequest);
+
+	/**
 	 * METODO DE RESGISTRO O ACTUALIZACION DE PERSONA
 	 * 
 	 * @param persona
 	 * @return insertUpdatePersonaDTO
 	 */
-	public StatusResponse insertUpdatePersonaDTO(PersonaDTO persona);
+	public ResponsePersonaEntity insertUpdatePersonaDTO(PersonaDTO persona);
 
 	/**
 	 * METODO DE REGISTRO O ACTUALIZACION CONTACTO DE PERSONA
@@ -50,7 +64,7 @@ public interface GeoMotService {
 	 * @param motoDTO
 	 * @return StatusResponse
 	 */
-	public StatusResponse insertUpdateMotoDTO(MotoDTO motoDTO);
+	public ResponseMotoEntity insertUpdateMotoDTO(MotoDTO motoDTO);
 
 	/**
 	 * METODO DE REGISTRO O ACTUALIZACION DE ESTADO KILOMETRAJE MOTO
@@ -66,14 +80,25 @@ public interface GeoMotService {
 	 * @param kilometrajenotificacion
 	 * @return StatusResponse
 	 */
-	public StatusResponse insertUpdateKilometrajenotificacionDTO(KilometrajenotificacionDTO kilometrajenotificacion);
+	public ResponseKilometrajenotificacion insertUpdateKilometrajenotificacionDTO(
+			KilometrajenotificacionDTO kilometrajenotificacion);
 
 	/**
-	 * METODO DE REGISTRO DE KILOMETRAJE DE NOTIFICACION DE MOTO
+	 * METODO DE CONSULTA DE LISTAS MAESTRAS
 	 * 
-	 * @param kilometrajenotificacion
-	 * @return StatusResponse
+	 * @param tipoDocumento
+	 * @param numDocumento
+	 * @param placa
+	 * @return ResponseMaestraLista
 	 */
-	public StatusResponse insertUpdatetNotificacion(NotificacionDTO notificacionDTO);
+	public ResponseMaestraLista getInfoListasMaestras(String tipoDato);
+
+	/**
+	 * METODO DE CONSULTA DE EVENTOS Y PLANTILLAS
+	 * 
+	 * @param idEvento
+	 * @returnResponseEventoPlantillaDTO
+	 */
+	public ResponseEventoPlantillaDTO getEventoPlantilla(Integer idEvento);
 
 }

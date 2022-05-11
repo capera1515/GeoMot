@@ -27,6 +27,9 @@ public class ControlEstadoMotoEntity {
 	@Column(name = "cemkilometraje")
 	private Double kilometraje;
 
+	@Column(name = "kilometrajemantenimieto")
+	private String kilometrajemantenimieto;
+
 	@Column(name = "stidestado")
 	private Integer estadoControlMoto;
 
@@ -84,6 +87,20 @@ public class ControlEstadoMotoEntity {
 	 */
 	public void setKilometraje(Double kilometraje) {
 		this.kilometraje = kilometraje;
+	}
+
+	/**
+	 * @return the kilometrajemantenimieto
+	 */
+	public String getKilometrajemantenimieto() {
+		return kilometrajemantenimieto;
+	}
+
+	/**
+	 * @param kilometrajemantenimieto the kilometrajemantenimieto to set
+	 */
+	public void setKilometrajemantenimieto(String kilometrajemantenimieto) {
+		this.kilometrajemantenimieto = kilometrajemantenimieto;
 	}
 
 	/**

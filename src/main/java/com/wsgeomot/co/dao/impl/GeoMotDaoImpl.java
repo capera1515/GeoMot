@@ -26,13 +26,16 @@ import com.wsgeomot.co.model.entity.ContactoEntity;
 import com.wsgeomot.co.model.entity.ControlEstadoMotoEntity;
 import com.wsgeomot.co.model.entity.KilometrajenotificacionEntity;
 import com.wsgeomot.co.model.entity.MotoEntity;
-import com.wsgeomot.co.model.entity.NotificacionEntity;
 import com.wsgeomot.co.model.entity.PersonaEntity;
+import com.wsgeomot.co.model.response.ResponseEventoPlantillaDTO;
+import com.wsgeomot.co.model.response.ResponseKilometrajenotificacion;
+import com.wsgeomot.co.model.response.ResponseMaestraLista;
+import com.wsgeomot.co.model.response.ResponseMotoEntity;
+import com.wsgeomot.co.model.response.ResponsePersonaEntity;
 import com.wsgeomot.co.respository.ContactoRepository;
 import com.wsgeomot.co.respository.ControlEstadoMotoRepository;
 import com.wsgeomot.co.respository.KilometrajenotificacionRepository;
 import com.wsgeomot.co.respository.MotoRepository;
-import com.wsgeomot.co.respository.NotificacionRepository;
 import com.wsgeomot.co.respository.PersonaRepository;
 import com.wsgeomot.util.ResponseCodes;
 
@@ -67,9 +70,6 @@ public class GeoMotDaoImpl implements GeoMotDao {
 
 	@Resource
 	KilometrajenotificacionRepository kilometrajenotificacionRepository;
-
-	@Resource
-	NotificacionRepository notificacionRepository;
 
 	/**
 	 * METODO DE CONSULTA DE INFORMACION GENERAL PERSONA MOTO
@@ -121,23 +121,116 @@ public class GeoMotDaoImpl implements GeoMotDao {
 	}
 
 	/**
+	 * METODO DE CONSULTA DE LISTAS MAESTRAS
+	 * 
+	 * @param tipoDocumento
+	 * @param numDocumento
+	 * @param placa
+	 * @return ResponseMaestraLista
+	 */
+	@SuppressWarnings("deprecation")
+	public ResponseMaestraLista getInfoListasMaestras(String tipoDato) {
+		ResponseMaestraLista requesInfoGeneral = new ResponseMaestraLista();
+		String hql = "{ CALL geomot.listasMaestras(?, ?)}";
+		String out = "";
+		ObjectMapper objectMapper = new ObjectMapper();
+		try (CallableStatement callableStatement = ((SessionImpl) getSession().getSession()).connection()
+				.prepareCall(hql)) {
+
+			callableStatement.setString(1, tipoDato);
+			callableStatement.registerOutParameter(2, Types.VARCHAR);
+			callableStatement.execute();
+
+			out = callableStatement.getString(2);
+			if (out != null) {
+				requesInfoGeneral = objectMapper.readValue(out, ResponseMaestraLista.class);
+				requesInfoGeneral.setStatusResponse(ResponseCodes.SUCCESS);
+			} else {
+				requesInfoGeneral.setStatusResponse(ResponseCodes.NOT_FOUND);
+			}
+		} catch (SQLTimeoutException e) {
+			String message = "getInfoListasMaestras SQLTimeoutException" + e.getMessage();
+			requesInfoGeneral.setStatusResponse(ResponseCodes.TIMEOUT_EXCEPTION);
+			logger.error(message);
+		} catch (SQLException sql) {
+			String message = "getInfoListasMaestras SQLException" + sql.getMessage();
+			requesInfoGeneral.setStatusResponse(ResponseCodes.DATABASE_EXCEPTION);
+			logger.error(message);
+		} catch (Exception e) {
+			requesInfoGeneral.setStatusResponse(ResponseCodes.TECHNICAL_ERROR);
+			String message = "getInfoListasMaestras" + e.getMessage() + e.getCause();
+			logger.error(message);
+
+		}
+
+		return requesInfoGeneral;
+
+	}
+
+	/**
+	 * METODO DE CONSULTA DE EVENTOS Y PLANTILLAS
+	 * 
+	 * @param idEvento
+	 * @returnResponseEventoPlantillaDTO
+	 */
+	@SuppressWarnings("deprecation")
+	public ResponseEventoPlantillaDTO getEventoPlantilla(Integer idEvento) {
+		ResponseEventoPlantillaDTO requesInfoGeneral = new ResponseEventoPlantillaDTO();
+		String hql = "{ CALL geomot.getEventoPlantilla(?, ?)}";
+		String out = "";
+		ObjectMapper objectMapper = new ObjectMapper();
+		try (CallableStatement callableStatement = ((SessionImpl) getSession().getSession()).connection()
+				.prepareCall(hql)) {
+
+			callableStatement.setInt(1, idEvento != null ? idEvento : 0);
+			callableStatement.registerOutParameter(2, Types.VARCHAR);
+			callableStatement.execute();
+
+			out = callableStatement.getString(2);
+			if (out != null) {
+				requesInfoGeneral = objectMapper.readValue(out, ResponseEventoPlantillaDTO.class);
+				requesInfoGeneral.setStatusResponse(ResponseCodes.SUCCESS);
+			} else {
+				requesInfoGeneral.setStatusResponse(ResponseCodes.NOT_FOUND);
+			}
+		} catch (SQLTimeoutException e) {
+			String message = "getEventoPlantilla SQLTimeoutException" + e.getMessage();
+			requesInfoGeneral.setStatusResponse(ResponseCodes.TIMEOUT_EXCEPTION);
+			logger.error(message);
+		} catch (SQLException sql) {
+			String message = "getEventoPlantilla SQLException" + sql.getMessage();
+			requesInfoGeneral.setStatusResponse(ResponseCodes.DATABASE_EXCEPTION);
+			logger.error(message);
+		} catch (Exception e) {
+			requesInfoGeneral.setStatusResponse(ResponseCodes.TECHNICAL_ERROR);
+			String message = "getEventoPlantilla" + e.getMessage() + e.getCause();
+			logger.error(message);
+
+		}
+
+		return requesInfoGeneral;
+
+	}
+
+	/**
 	 * METODO DE RESGISTRO O ACTUALIZACION DE PERSONA
 	 * 
 	 * @param entity
 	 * @return StatusResponse
 	 */
-	public StatusResponse insertUpdatetPersona(PersonaEntity entity) {
-		StatusResponse statusResponse = null;
+	public ResponsePersonaEntity insertUpdatetPersona(PersonaEntity entity) {
+		ResponsePersonaEntity responsePersonaEntity = new ResponsePersonaEntity();
 		try {
 			personaRepository.save(entity);
-			statusResponse = ResponseCodes.SUCCESS;
+			responsePersonaEntity.setPersonaEntity(entity);
+			responsePersonaEntity.setStatusResponse(ResponseCodes.SUCCESS);
 		} catch (Exception e) {
-			statusResponse = ResponseCodes.DATABASE_EXCEPTION;
+			responsePersonaEntity.setStatusResponse(ResponseCodes.DATABASE_EXCEPTION);
 			String message = "GeoMotDaoImpl insertUpdatetPersona" + e.getMessage() + e.getCause();
 			logger.error(message);
 
 		}
-		return statusResponse;
+		return responsePersonaEntity;
 	}
 
 	/**
@@ -166,18 +259,19 @@ public class GeoMotDaoImpl implements GeoMotDao {
 	 * @param MotoEntity
 	 * @return StatusResponse
 	 */
-	public StatusResponse insertUpdatetMoto(MotoEntity entity) {
-		StatusResponse statusResponse = null;
+	public ResponseMotoEntity insertUpdatetMoto(MotoEntity entity) {
+		ResponseMotoEntity responseMotoEntity = new ResponseMotoEntity();
 		try {
 			motoRepository.save(entity);
-			statusResponse = ResponseCodes.SUCCESS;
+			responseMotoEntity.setStatusResponse(ResponseCodes.SUCCESS);
+			responseMotoEntity.setMotoEntity(entity);
 		} catch (Exception e) {
-			statusResponse = ResponseCodes.DATABASE_EXCEPTION;
+			responseMotoEntity.setStatusResponse(ResponseCodes.DATABASE_EXCEPTION);
 			String message = "GeoMotDaoImpl insertUpdatetMoto" + e.getMessage() + e.getCause();
 			logger.error(message);
 
 		}
-		return statusResponse;
+		return responseMotoEntity;
 	}
 
 	/**
@@ -206,38 +300,19 @@ public class GeoMotDaoImpl implements GeoMotDao {
 	 * @param KilometrajenotificacionEntity
 	 * @return StatusResponse
 	 */
-	public StatusResponse insertUpdatetKilometrajenotificacion(KilometrajenotificacionEntity entity) {
-		StatusResponse statusResponse = null;
+	public ResponseKilometrajenotificacion insertUpdatetKilometrajenotificacion(KilometrajenotificacionEntity entity) {
+		ResponseKilometrajenotificacion responseKilometrajenotificacion = new ResponseKilometrajenotificacion();
 		try {
 			kilometrajenotificacionRepository.save(entity);
-			statusResponse = ResponseCodes.SUCCESS;
+			responseKilometrajenotificacion.setKilometrajenotificacionEntity(entity);
+			responseKilometrajenotificacion.setStatusResponse(ResponseCodes.SUCCESS);
 		} catch (Exception e) {
-			statusResponse = ResponseCodes.DATABASE_EXCEPTION;
+			responseKilometrajenotificacion.setStatusResponse(ResponseCodes.DATABASE_EXCEPTION);
 			String message = "GeoMotDaoImpl insertUpdatetKilometrajenotificacion" + e.getMessage() + e.getCause();
 			logger.error(message);
 
 		}
-		return statusResponse;
-	}
-
-	/**
-	 * METODO DE REGISTRODE NOTIFICACION
-	 * 
-	 * @param NotificacionEntity
-	 * @return StatusResponse
-	 */
-	public StatusResponse insertUpdatetNotificacion(NotificacionEntity entity) {
-		StatusResponse statusResponse = null;
-		try {
-			notificacionRepository.save(entity);
-			statusResponse = ResponseCodes.SUCCESS;
-		} catch (Exception e) {
-			statusResponse = ResponseCodes.DATABASE_EXCEPTION;
-			String message = "GeoMotDaoImpl insertUpdatetNotificacion" + e.getMessage() + e.getCause();
-			logger.error(message);
-
-		}
-		return statusResponse;
+		return responseKilometrajenotificacion;
 	}
 
 }

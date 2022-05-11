@@ -2,61 +2,164 @@ package com.wsgeomot.co.model.dto;
 
 public class KilometrajenotificacionDTO {
 
-	private Integer idKilometrajeNoti;
-	private Integer idMoto;
-	private Integer idEvento;
-	private Double kilometrajeNoti;
-	private Integer estadoKilometrajeNoti;
+	private Integer knidkilometrajenoti;
+
+	private Integer mtidmoto;
+
+	private Integer evtidevento;
+
+	private Double kilometrajevalidador;
+
+	private Double kntkilometraje;
+
+	private String ntfecha;
+
+	private double ntduracion;
+
+	private Integer ntnumrepeticion;
+
+	private double nttiemporepeticion;
+
+	private Integer stidestado;
 
 	/**
-	 * @return the idKilometrajeNoti
+	 * @return the knidkilometrajenoti
 	 */
-	public Integer getIdKilometrajeNoti() {
-		return idKilometrajeNoti;
+	public Integer getKnidkilometrajenoti() {
+		return knidkilometrajenoti;
 	}
 
 	/**
-	 * @param idKilometrajeNoti the idKilometrajeNoti to set
+	 * @param knidkilometrajenoti the knidkilometrajenoti to set
 	 */
-	public void setIdKilometrajeNoti(Integer idKilometrajeNoti) {
-		this.idKilometrajeNoti = idKilometrajeNoti;
+	public void setKnidkilometrajenoti(Integer knidkilometrajenoti) {
+		this.knidkilometrajenoti = knidkilometrajenoti;
 	}
 
 	/**
-	 * @return the idMoto
+	 * @return the mtidmoto
 	 */
-	public Integer getIdMoto() {
-		return idMoto;
+	public Integer getMtidmoto() {
+		return mtidmoto;
 	}
 
 	/**
-	 * @param idMoto the idMoto to set
+	 * @param mtidmoto the mtidmoto to set
 	 */
-	public void setIdMoto(Integer idMoto) {
-		this.idMoto = idMoto;
+	public void setMtidmoto(Integer mtidmoto) {
+		this.mtidmoto = mtidmoto;
 	}
 
-	public Integer getIdEvento() {
-		return idEvento;
+	/**
+	 * @return the evtidevento
+	 */
+	public Integer getEvtidevento() {
+		return evtidevento;
 	}
 
-	public void setIdEvento(Integer idEvento) {
-		this.idEvento = idEvento;
+	/**
+	 * @param evtidevento the evtidevento to set
+	 */
+	public void setEvtidevento(Integer evtidevento) {
+		this.evtidevento = evtidevento;
 	}
 
-	public Double getKilometrajeNoti() {
-		return kilometrajeNoti;
+	/**
+	 * @return the kilometrajevalidador
+	 */
+	public Double getKilometrajevalidador() {
+		return kilometrajevalidador;
 	}
 
-	public void setKilometrajeNoti(Double kilometrajeNoti) {
-		this.kilometrajeNoti = kilometrajeNoti;
+	/**
+	 * @param kilometrajevalidador the kilometrajevalidador to set
+	 */
+	public void setKilometrajevalidador(Double kilometrajevalidador) {
+		this.kilometrajevalidador = kilometrajevalidador;
 	}
 
-	public Integer getEstadoKilometrajeNoti() {
-		return estadoKilometrajeNoti;
+	/**
+	 * @return the kntkilometraje
+	 */
+	public Double getKntkilometraje() {
+		return kntkilometraje;
 	}
 
-	public void setEstadoKilometrajeNoti(Integer estadoKilometrajeNoti) {
-		this.estadoKilometrajeNoti = estadoKilometrajeNoti;
+	/**
+	 * @param kntkilometraje the kntkilometraje to set
+	 */
+	public void setKntkilometraje(Double kntkilometraje) {
+		this.kntkilometraje = kntkilometraje;
 	}
+
+	/**
+	 * @return the ntfecha
+	 */
+	public String getNtfecha() {
+		return ntfecha;
+	}
+
+	/**
+	 * @param ntfecha the ntfecha to set
+	 */
+	public void setNtfecha(String ntfecha) {
+		this.ntfecha = ntfecha;
+	}
+
+	/**
+	 * @return the ntduracion
+	 */
+	public double getNtduracion() {
+		return ntduracion;
+	}
+
+	/**
+	 * @param ntduracion the ntduracion to set
+	 */
+	public void setNtduracion(double ntduracion) {
+		this.ntduracion = ntduracion;
+	}
+
+	/**
+	 * @return the ntnumrepeticion
+	 */
+	public Integer getNtnumrepeticion() {
+		return ntnumrepeticion;
+	}
+
+	/**
+	 * @param ntnumrepeticion the ntnumrepeticion to set
+	 */
+	public void setNtnumrepeticion(Integer ntnumrepeticion) {
+		this.ntnumrepeticion = ntnumrepeticion;
+	}
+
+	/**
+	 * @return the nttiemporepeticion
+	 */
+	public double getNttiemporepeticion() {
+		return nttiemporepeticion;
+	}
+
+	/**
+	 * @param nttiemporepeticion the nttiemporepeticion to set
+	 */
+	public void setNttiemporepeticion(double nttiemporepeticion) {
+		this.nttiemporepeticion = nttiemporepeticion;
+	}
+
+	/**
+	 * @return the stidestado
+	 */
+	public Integer getStidestado() {
+		return stidestado;
+	}
+
+	/**
+	 * @param stidestado the stidestado to set
+	 */
+	public void setStidestado(Integer stidestado) {
+		this.stidestado = stidestado;
+	}
+
 }

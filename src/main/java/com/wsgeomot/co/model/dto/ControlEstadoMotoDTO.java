@@ -6,6 +6,7 @@ public class ControlEstadoMotoDTO {
 	private Integer idMoto;
 	private String fecha;
 	private Double kilometraje;
+	private String kilometrajemantenimieto;
 	private Integer estadoControlMoto;
 
 	/**
@@ -62,6 +63,20 @@ public class ControlEstadoMotoDTO {
 	 */
 	public void setKilometraje(Double kilometraje) {
 		this.kilometraje = kilometraje;
+	}
+
+	/**
+	 * @return the kilometrajemantenimieto
+	 */
+	public String getKilometrajemantenimieto() {
+		return kilometrajemantenimieto;
+	}
+
+	/**
+	 * @param kilometrajemantenimieto the kilometrajemantenimieto to set
+	 */
+	public void setKilometrajemantenimieto(String kilometrajemantenimieto) {
+		this.kilometrajemantenimieto = kilometrajemantenimieto;
 	}
 
 	/**

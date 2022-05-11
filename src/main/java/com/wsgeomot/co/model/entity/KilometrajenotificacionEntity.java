@@ -1,5 +1,7 @@
 package com.wsgeomot.co.model.entity;
 
+import java.sql.Timestamp;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,88 +15,173 @@ public class KilometrajenotificacionEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
 	@Column(name = "knidkilometrajenoti")
-	private Integer idKilometrajeNoti;
+	private Integer knidkilometrajenoti;
 
 	@Column(name = "mtidmoto")
-	private Integer idMoto;
+	private Integer mtidmoto;
 
 	@Column(name = "evtidevento")
-	private Integer idEvento;
+	private Integer evtidevento;
+
+	@Column(name = "nttkilometrajevalidador")
+	private Double kilometrajevalidador;
 
 	@Column(name = "kntkilometraje")
-	private Double kilometrajeNoti;
+	private Double kntkilometraje;
+
+	@Column(name = "ntfecha")
+	private Timestamp ntfecha;
+
+	@Column(name = "ntduracion")
+	private double ntduracion;
+
+	@Column(name = "ntnumrepeticion")
+	private Integer ntnumrepeticion;
+
+	@Column(name = "nttiemporepeticion")
+	private double nttiemporepeticion;
 
 	@Column(name = "stidestado")
-	private Integer estadoKilometrajeNoti;
+	private Integer stidestado;
 
 	/**
-	 * @return the idKilometrajeNoti
+	 * @return the knidkilometrajenoti
 	 */
-	public Integer getIdKilometrajeNoti() {
-		return idKilometrajeNoti;
+	public Integer getKnidkilometrajenoti() {
+		return knidkilometrajenoti;
 	}
 
 	/**
-	 * @param idKilometrajeNoti the idKilometrajeNoti to set
+	 * @param knidkilometrajenoti the knidkilometrajenoti to set
 	 */
-	public void setIdKilometrajeNoti(Integer idKilometrajeNoti) {
-		this.idKilometrajeNoti = idKilometrajeNoti;
+	public void setKnidkilometrajenoti(Integer knidkilometrajenoti) {
+		this.knidkilometrajenoti = knidkilometrajenoti;
 	}
 
 	/**
-	 * @return the idMoto
+	 * @return the mtidmoto
 	 */
-	public Integer getIdMoto() {
-		return idMoto;
+	public Integer getMtidmoto() {
+		return mtidmoto;
 	}
 
 	/**
-	 * @param idMoto the idMoto to set
+	 * @param mtidmoto the mtidmoto to set
 	 */
-	public void setIdMoto(Integer idMoto) {
-		this.idMoto = idMoto;
+	public void setMtidmoto(Integer mtidmoto) {
+		this.mtidmoto = mtidmoto;
 	}
 
 	/**
-	 * @return the idEvento
+	 * @return the evtidevento
 	 */
-	public Integer getIdEvento() {
-		return idEvento;
+	public Integer getEvtidevento() {
+		return evtidevento;
 	}
 
 	/**
-	 * @param idEvento the idEvento to set
+	 * @param evtidevento the evtidevento to set
 	 */
-	public void setIdEvento(Integer idEvento) {
-		this.idEvento = idEvento;
+	public void setEvtidevento(Integer evtidevento) {
+		this.evtidevento = evtidevento;
 	}
 
 	/**
-	 * @return the kilometrajeNoti
+	 * @return the kilometrajevalidador
 	 */
-	public Double getKilometrajeNoti() {
-		return kilometrajeNoti;
+	public Double getKilometrajevalidador() {
+		return kilometrajevalidador;
 	}
 
 	/**
-	 * @param kilometrajeNoti the kilometrajeNoti to set
+	 * @param kilometrajevalidador the kilometrajevalidador to set
 	 */
-	public void setKilometrajeNoti(Double kilometrajeNoti) {
-		this.kilometrajeNoti = kilometrajeNoti;
+	public void setKilometrajevalidador(Double kilometrajevalidador) {
+		this.kilometrajevalidador = kilometrajevalidador;
 	}
 
 	/**
-	 * @return the estadoKilometrajeNoti
+	 * @return the kntkilometraje
 	 */
-	public Integer getEstadoKilometrajeNoti() {
-		return estadoKilometrajeNoti;
+	public Double getKntkilometraje() {
+		return kntkilometraje;
 	}
 
 	/**
-	 * @param estadoKilometrajeNoti the estadoKilometrajeNoti to set
+	 * @param kntkilometraje the kntkilometraje to set
 	 */
-	public void setEstadoKilometrajeNoti(Integer estadoKilometrajeNoti) {
-		this.estadoKilometrajeNoti = estadoKilometrajeNoti;
+	public void setKntkilometraje(Double kntkilometraje) {
+		this.kntkilometraje = kntkilometraje;
+	}
+
+	/**
+	 * @return the ntfecha
+	 */
+	public Timestamp getNtfecha() {
+		return ntfecha;
+	}
+
+	/**
+	 * @param ntfecha the ntfecha to set
+	 */
+	public void setNtfecha(Timestamp ntfecha) {
+		this.ntfecha = ntfecha;
+	}
+
+	/**
+	 * @return the ntduracion
+	 */
+	public double getNtduracion() {
+		return ntduracion;
+	}
+
+	/**
+	 * @param ntduracion the ntduracion to set
+	 */
+	public void setNtduracion(double ntduracion) {
+		this.ntduracion = ntduracion;
+	}
+
+	/**
+	 * @return the ntnumrepeticion
+	 */
+	public Integer getNtnumrepeticion() {
+		return ntnumrepeticion;
+	}
+
+	/**
+	 * @param ntnumrepeticion the ntnumrepeticion to set
+	 */
+	public void setNtnumrepeticion(Integer ntnumrepeticion) {
+		this.ntnumrepeticion = ntnumrepeticion;
+	}
+
+	/**
+	 * @return the nttiemporepeticion
+	 */
+	public double getNttiemporepeticion() {
+		return nttiemporepeticion;
+	}
+
+	/**
+	 * @param nttiemporepeticion the nttiemporepeticion to set
+	 */
+	public void setNttiemporepeticion(double nttiemporepeticion) {
+		this.nttiemporepeticion = nttiemporepeticion;
+	}
+
+	/**
+	 * @return the stidestado
+	 */
+	public Integer getStidestado() {
+		return stidestado;
+	}
+
+	/**
+	 * @param stidestado the stidestado to set
+	 */
+	public void setStidestado(Integer stidestado) {
+		this.stidestado = stidestado;
 	}
 
 }

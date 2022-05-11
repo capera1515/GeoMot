@@ -9,8 +9,12 @@ import com.wsgeomot.co.model.entity.ContactoEntity;
 import com.wsgeomot.co.model.entity.ControlEstadoMotoEntity;
 import com.wsgeomot.co.model.entity.KilometrajenotificacionEntity;
 import com.wsgeomot.co.model.entity.MotoEntity;
-import com.wsgeomot.co.model.entity.NotificacionEntity;
 import com.wsgeomot.co.model.entity.PersonaEntity;
+import com.wsgeomot.co.model.response.ResponseEventoPlantillaDTO;
+import com.wsgeomot.co.model.response.ResponseKilometrajenotificacion;
+import com.wsgeomot.co.model.response.ResponseMaestraLista;
+import com.wsgeomot.co.model.response.ResponseMotoEntity;
+import com.wsgeomot.co.model.response.ResponsePersonaEntity;
 
 /**
  * @author Andres Capera
@@ -34,7 +38,7 @@ public interface GeoMotDao {
 	 * @param entity
 	 * @return StatusResponse
 	 */
-	public StatusResponse insertUpdatetPersona(PersonaEntity entity);
+	public ResponsePersonaEntity insertUpdatetPersona(PersonaEntity entity);
 
 	/**
 	 * METODO DE REGISTRO O ACTUALIZACION CONTACTO DE PERSONA
@@ -50,7 +54,7 @@ public interface GeoMotDao {
 	 * @param MotoEntity
 	 * @return StatusResponse
 	 */
-	public StatusResponse insertUpdatetMoto(MotoEntity entity);
+	public ResponseMotoEntity insertUpdatetMoto(MotoEntity entity);
 
 	/**
 	 * METODO DE REGISTRO O ACTUALIZACION DE ESTADO KILOMETRAJE MOTO
@@ -66,14 +70,26 @@ public interface GeoMotDao {
 	 * @param KilometrajenotificacionEntity
 	 * @return StatusResponse
 	 */
-	public StatusResponse insertUpdatetKilometrajenotificacion(KilometrajenotificacionEntity entity);
+	public ResponseKilometrajenotificacion insertUpdatetKilometrajenotificacion(KilometrajenotificacionEntity entity);
+
 
 	/**
-	 * METODO DE REGISTRODE NOTIFICACION
+	 * METODO DE CONSULTA DE LISTAS MAESTRAS
 	 * 
-	 * @param NotificacionEntity
-	 * @return StatusResponse
+	 * @param tipoDocumento
+	 * @param numDocumento
+	 * @param placa
+	 * @return ResponseMaestraLista
 	 */
-	public StatusResponse insertUpdatetNotificacion(NotificacionEntity entity);
+	public ResponseMaestraLista getInfoListasMaestras(String tipoDato);
+	
+	
+	/**
+	 * METODO DE CONSULTA DE EVENTOS Y PLANTILLAS
+	 * 
+	 * @param idEvento
+	 * @returnResponseEventoPlantillaDTO
+	 */
+	public ResponseEventoPlantillaDTO getEventoPlantilla(Integer idEvento);
 
 }
