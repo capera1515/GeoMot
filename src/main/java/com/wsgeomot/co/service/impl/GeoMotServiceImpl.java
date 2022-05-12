@@ -109,6 +109,7 @@ public class GeoMotServiceImpl implements GeoMotService {
 			}
 
 			if (responsePersonaEntity.getStatusResponse().getStatus().equals(ResponseCodes.SUCCESS.getStatus())) {
+				responseContactoGL.setPersona(responsePersonaEntity.getPersonaEntity());
 				responseContactoGL = insertUpdateContactoListDTO(persoContacRequest.getContactoDTOList(),
 						responsePersonaEntity.getPersonaEntity().getIdPersona());
 			} else {
